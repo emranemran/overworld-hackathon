@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>over.world</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff8855;
+        }
+        
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+        
+        /* Login Panel */
+        #login-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            margin: 100px auto;
+        }
+        
+        #login-panel input {
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 18px;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 4px;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+        
+        #login-panel input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        
+        #login-panel button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 12px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        #login-panel button:hover {
+            background: #00cc6a;
+            transform: scale(1.05);
+        }
+        
+        #login-panel button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #login-status {
+            margin-top: 20px;
+            color: #888;
+            min-height: 24px;
+        }
+        
+        #login-status.error {
+            color: #ff4444;
+        }
+        
+        #login-status.success {
+            color: #00ff88;
+        }
+        
+        /* Game Panel */
+        #game-panel {
+            display: none;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        
+        .metrics {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+        
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .metric-label {
+            color: #888;
+        }
+        
+        .metric-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        
+        .metric-value.warning {
+            color: #ffaa00;
+        }
+        
+        .metric-value.danger {
+            color: #ff4444;
+        }
+        
+        #disconnect-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .game-container {
+            display: flex;
+            gap: 20px;
+            /* Prevent flexbox from stretching the canvas wrapper to the sidebar height */
+            align-items: flex-start;
+        }
+        
+        .canvas-wrapper {
+            position: relative;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 4px;
+            flex: 1 1 auto;
+            min-width: 640px;
+            max-width: 980px;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+        }
+        
+        #game-canvas {
+            display: block;
+            cursor: crosshair;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .canvas-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        #pause-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: #ffaa00;
+            padding: 20px 40px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #ffaa00;
+        }
+        
+        .sidebar {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        
+        .panel h3 {
+            color: #00ff88;
+            font-size: 14px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        
+        /* Prompt Panel */
+        #prompt-input {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+        
+        #prompt-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        
+        #apply-prompt-btn {
+            width: 100%;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        /* Image Upload Panel */
+        .upload-zone {
+            border: 2px dashed #444;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .upload-zone:hover {
+            border-color: #00ff88;
+            background: #0a0a0a;
+        }
+        
+        .upload-zone.dragover {
+            border-color: #00ff88;
+            background: #1a2a1a;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        #preview-img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        #upload-seed-btn {
+            width: 100%;
+            background: #0088ff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        /* Controls Panel */
+        .controls-info {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.8;
+        }
+        
+        .controls-info kbd {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #fff;
+        }
+        
+        /* Keys Display */
+        #active-keys {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            min-height: 30px;
+        }
+        
+        .key-badge {
+            background: #00ff88;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4444;
+        }
+        
+        .status-dot.connected {
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+        }
+        
+        /* All Slots Full Message */
+        #slots-full-message {
+            display: none;
+            background: #331a1a;
+            border: 1px solid #ff4444;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #manual-retry-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        #manual-retry-btn:hover {
+            background: #cc3333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>over.world</h1>
+        
+        <!-- Login Panel -->
+        <div id="login-panel">
+            <h2>Enter Passphrase</h2>
+            <input type="text" id="passphrase-input" placeholder="PASSPHRASE" autocomplete="off" />
+            <button id="connect-btn" onclick="attemptConnect()">CONNECT</button>
+            <div id="login-status"></div>
+            
+            <div id="slots-full-message">
+                <p>⚠️ All GPU slots are currently in use</p>
+                <p style="color: #888; margin: 15px 0;">Please wait at least 2 minutes before retrying</p>
+                <button id="manual-retry-btn" onclick="manualRetry()">RETRY CONNECTION</button>
+            </div>
+        </div>
+        
+        <!-- Game Panel -->
+        <div id="game-panel">
+            <div class="game-header">
+                <div class="connection-status">
+                    <div class="status-dot" id="status-dot"></div>
+                    <span id="connection-text">Disconnected</span>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <span class="metric-label">FPS:</span>
+                        <span class="metric-value" id="fps-value">0</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Session:</span>
+                        <span class="metric-value" id="session-time">15:00</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Idle:</span>
+                        <span class="metric-value" id="idle-time">5:00</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">GPU:</span>
+                        <span class="metric-value" id="gpu-id">-</span>
+                    </div>
+                </div>
+                <button id="disconnect-btn" onclick="disconnect()">DISCONNECT</button>
+            </div>
+            
+            <div class="game-container">
+                <div class="canvas-wrapper">
+                    <canvas id="game-canvas" width="640" height="360"></canvas>
+                    <div class="canvas-overlay">
+                        <span id="frame-id">Frame: 0</span>
+                    </div>
+                    <div id="pause-indicator">⏸ PAUSED</div>
+                </div>
+                
+                <div class="sidebar">
+                    <!-- Active Keys -->
+                    <div class="panel">
+                        <h3>Active Keys</h3>
+                        <div id="active-keys"></div>
+                    </div>
+                    
+                    <!-- Prompt Panel -->
+                    <div class="panel">
+                        <h3>Prompt</h3>
+                        <textarea id="prompt-input" placeholder="Enter scene description...">First-person shooter gameplay footage from a true POV perspective</textarea>
+                        <button id="apply-prompt-btn" onclick="applyPrompt()">APPLY PROMPT</button>
+                    </div>
+                    
+                    <!-- Image Upload Panel -->
+                    <div class="panel">
+                        <h3>Upload Seed Image</h3>
+                        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+                            <p>📁 Click or drag image here</p>
+                            <p style="font-size: 11px; color: #666; margin-top: 5px;">Supported: PNG, JPG</p>
+                        </div>
+                        <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" onchange="handleFileSelect(event)" />
+                        <img id="preview-img" />
+                        <button id="upload-seed-btn" onclick="uploadSeed()">UPLOAD & RESET</button>
+                    </div>
+                    
+                    <!-- Controls Info -->
+                    <div class="panel">
+                        <h3>Controls</h3>
+                        <div class="controls-info">
+                            <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> - Move<br>
+                            <kbd>Mouse</kbd> - Look around<br>
+                            <kbd>Left Click</kbd> - Fire/Action<br>
+                            <kbd>Right Click</kbd> - Aim/Alt<br>
+                            <kbd>Shift</kbd> - Sprint<br>
+                            <kbd>Space</kbd> - Jump<br>
+                            <kbd>P</kbd> / <kbd>Esc</kbd> - Pause/Resume<br>
+                            <kbd>U</kbd> - Reset to seed<br>
+                            <kbd>Click canvas</kbd> - Capture mouse
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================================
+        // CONFIGURATION
+        // =============================================================================
+        
+        const MACHINES = [
+            { ip: '50.35.188.29', name: 'Machine 1' },
+            { ip: '50.35.188.64', name: 'Machine 2' },
+            { ip: '50.35.188.72', name: 'Machine 3' },
+        ];
+        
+        const ROUTER_PORT = 8000;
+        
+        // =============================================================================
+        // STATE
+        // =============================================================================
+        
+        let ws = null;
+        let sessionId = null;
+        let currentMachine = null;
+        let currentPort = null;
+        let passphrase = '';
+        
+        let frameCount = 0;
+        let lastFpsUpdate = Date.now();
+        let fps = 0;
+        
+        let sessionStartTime = null;
+        let sessionDuration = 900; // 15 minutes
+        let lastActivityTime = null;
+        let idleTimeout = 300;
+        
+        let activeKeys = new Set();
+        let pendingImage = null;
+        
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // =============================================================================
+        // CONNECTION LOGIC
+        // =============================================================================
+        
+        async function attemptConnect() {
+            passphrase = document.getElementById('passphrase-input').value.trim();
+            if (!passphrase) {
+                setLoginStatus('Please enter a passphrase', 'error');
+                return;
+            }
+            
+            document.getElementById('connect-btn').disabled = true;
+            setLoginStatus('Connecting...', '');
+            
+            // Try each machine in order
+            for (const machine of MACHINES) {
+                setLoginStatus(`Trying ${machine.name}...`, '');
+                
+                try {
+                    const result = await tryClaimGPU(machine);
+                    if (result.success) {
+                        setLoginStatus(`Connected!`, 'success');
+                        currentMachine = machine;
+                        currentPort = result.port;
+                        sessionId = result.session_id;
+                        sessionDuration = result.expires_in || 900;
+                        
+                        // Connect WebSocket
+                        connectWebSocket(machine.ip, result.port);
+                        return;
+                    } else if (result.error === 'invalid_key') {
+                        setLoginStatus('Invalid passphrase', 'error');
+                        document.getElementById('connect-btn').disabled = false;
+                        return;
+                    }
+                    // no_gpu_available - try next machine
+                } catch (e) {
+                    console.log(`${machine.name} unreachable:`, e);
+                }
+            }
+            
+            // All machines full or unreachable
+            showSlotsFull();
+        }
+        
+        async function tryClaimGPU(machine) {
+            const url = `http://${machine.ip}:${ROUTER_PORT}/claim?key=${encodeURIComponent(passphrase)}`;
+            const response = await fetch(url, { 
+                method: 'GET',
+                mode: 'cors',
+            });
+            return await response.json();
+        }
+        
+        function connectWebSocket(ip, port) {
+            const wsUrl = `ws://${ip}:${port}/ws?session_id=${sessionId}`;
+            console.log('Connecting to:', wsUrl);
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                showGamePanel();
+                sessionStartTime = Date.now();
+                lastActivityTime = Date.now();
+                startTimers();
+                
+                // Send initial prompt
+                sendPrompt(document.getElementById('prompt-input').value);
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleMessage(data);
+                } catch (e) {
+                    console.error('Failed to parse message:', e);
+                }
+            };
+            
+            ws.onclose = () => {
+                console.log('WebSocket closed');
+                setConnectionStatus(false);
+                
+                // Release GPU on router if we had a session
+                if (sessionId && currentMachine) {
+                    fetch(`http://${currentMachine.ip}:${ROUTER_PORT}/release`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_id: sessionId }),
+                    }).catch(console.error);
+                    
+                    // Clear session state
+                    const wasConnected = sessionId !== null;
+                    sessionId = null;
+                    
+                    if (wasConnected) {
+                        alert('Connection lost. Please reconnect.');
+                        showLoginPanel();
+                    }
+                }
+            };
+            
+            ws.onerror = (e) => {
+                console.error('WebSocket error:', e);
+            };
+        }
+        
+        function disconnect() {
+            // Store session info before clearing
+            const sid = sessionId;
+            const machine = currentMachine;
+            
+            // Clear session state first to prevent onclose from double-releasing
+            sessionId = null;
+            currentMachine = null;
+            currentPort = null;
+            
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+            
+            // Release GPU on router
+            if (sid && machine) {
+                fetch(`http://${machine.ip}:${ROUTER_PORT}/release`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sid }),
+                }).catch(console.error);
+            }
+            
+            showLoginPanel();
+        }
+        
+        // =============================================================================
+        // MESSAGE HANDLING
+        // =============================================================================
+        
+        function handleMessage(data) {
+            switch (data.type) {
+                case 'frame':
+                    displayFrame(data);
+                    break;
+                case 'status':
+                    console.log('Status:', data.message);
+                    break;
+                case 'timeout_warning':
+                    alert(`Warning: Session expires in ${data.remaining} seconds!`);
+                    break;
+                case 'session_expired':
+                    alert('Session expired. Please reconnect.');
+                    showLoginPanel();
+                    break;
+                case 'error':
+                    console.error('Server error:', data.message);
+                    break;
+            }
+        }
+        
+        function displayFrame(data) {
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = 'data:image/jpeg;base64,' + data.data;
+            
+            // Update frame counter
+            document.getElementById('frame-id').textContent = `Frame: ${data.frame_id || 0}`;
+            
+            // Update FPS
+            frameCount++;
+            const now = Date.now();
+            if (now - lastFpsUpdate >= 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastFpsUpdate = now;
+                document.getElementById('fps-value').textContent = fps;
+            }
+        }
+        
+        // =============================================================================
+        // INPUT HANDLING
+        // =============================================================================
+        
+        let isPaused = false;
+        
+        document.addEventListener('keydown', (e) => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            if (document.activeElement.tagName === 'TEXTAREA' || 
+                document.activeElement.tagName === 'INPUT') return;
+            
+            const key = e.key.toUpperCase();
+            
+            // Special keys that send specific message types
+            if (key === 'U') {
+                // Send reset command
+                ws.send(JSON.stringify({ type: 'reset' }));
+                updateActivity();
+                e.preventDefault();
+                return;
+            }
+            
+            if (key === 'P' || key === 'ESCAPE') {
+                // Toggle pause/resume (P or Esc)
+                isPaused = !isPaused;
+                ws.send(JSON.stringify({ type: isPaused ? 'pause' : 'resume' }));
+                updatePauseDisplay();
+                updateActivity();
+                // Prevent default for P; allow Esc to keep browser/pointer-lock behavior
+                if (key === 'P') e.preventDefault();
+                return;
+            }
+            
+            if (!activeKeys.has(key)) {
+                activeKeys.add(key);
+                updateActiveKeysDisplay();
+            }
+            
+            sendControl();
+            updateActivity();
+            e.preventDefault();
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            const key = e.key.toUpperCase();
+            activeKeys.delete(key);
+            updateActiveKeysDisplay();
+            
+            sendControl();
+        });
+        
+        let lastMouseX = 0, lastMouseY = 0;
+        let isPointerLocked = false;
+        
+        canvas.addEventListener('click', () => {
+            canvas.requestPointerLock();
+        });
+        
+        document.addEventListener('pointerlockchange', () => {
+            isPointerLocked = document.pointerLockElement === canvas;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            if (!isPointerLocked) return;
+            
+            const dx = e.movementX;
+            const dy = e.movementY;
+            
+            sendControl(dx, dy);
+            updateActivity();
+        });
+        
+        // Mouse button mapping
+        const MOUSE_BUTTON_NAMES = {
+            0: 'MOUSE_LEFT',
+            1: 'MOUSE_MIDDLE',
+            2: 'MOUSE_RIGHT',
+        };
+        
+        canvas.addEventListener('mousedown', (e) => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            if (!isPointerLocked) return;
+            
+            const btnName = MOUSE_BUTTON_NAMES[e.button];
+            if (btnName && !activeKeys.has(btnName)) {
+                activeKeys.add(btnName);
+                updateActiveKeysDisplay();
+                sendControl();
+                updateActivity();
+            }
+            e.preventDefault();
+        });
+        
+        canvas.addEventListener('mouseup', (e) => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            const btnName = MOUSE_BUTTON_NAMES[e.button];
+            if (btnName) {
+                activeKeys.delete(btnName);
+                updateActiveKeysDisplay();
+                sendControl();
+            }
+        });
+        
+        // Prevent context menu on right-click
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        function sendControl(mouseDx = 0, mouseDy = 0) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            const buttons = Array.from(activeKeys);
+            
+            ws.send(JSON.stringify({
+                type: 'control',
+                buttons: buttons,
+                mouse_dx: mouseDx,
+                mouse_dy: mouseDy,
+            }));
+        }
+        
+        function updateActiveKeysDisplay() {
+            const container = document.getElementById('active-keys');
+            container.innerHTML = '';
+            activeKeys.forEach(key => {
+                const badge = document.createElement('span');
+                badge.className = 'key-badge';
+                badge.textContent = key;
+                container.appendChild(badge);
+            });
+        }
+        
+        function updatePauseDisplay() {
+            const indicator = document.getElementById('pause-indicator');
+            if (isPaused) {
+                indicator.style.display = 'block';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+        
+        // =============================================================================
+        // PROMPT & IMAGE UPLOAD
+        // =============================================================================
+        
+        function applyPrompt() {
+            const prompt = document.getElementById('prompt-input').value.trim();
+            if (prompt) {
+                sendPrompt(prompt);
+            }
+        }
+        
+        function sendPrompt(prompt) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            ws.send(JSON.stringify({
+                type: 'prompt',
+                prompt: prompt,
+            }));
+            
+            updateActivity();
+        }
+        
+        // File upload handling
+        const uploadZone = document.getElementById('upload-zone');
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                processImageFile(file);
+            }
+        });
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processImageFile(file);
+            }
+        }
+        
+        const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
+        
+        function processImageFile(file) {
+            // Validate file type
+            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                showUploadError('Supported file types: PNG, JPG.');
+                return;
+            }
+            
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                showUploadError('Image too large. Maximum size is 10MB.');
+                return;
+            }
+            
+            clearUploadError();
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('preview-img');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                document.getElementById('upload-seed-btn').style.display = 'block';
+                
+                // Store base64 data (remove data URL prefix)
+                pendingImage = e.target.result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function showUploadError(message) {
+            let errorEl = document.getElementById('upload-error');
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.id = 'upload-error';
+                errorEl.style.cssText = 'color: #ff4444; font-size: 12px; margin-top: 10px; padding: 8px; background: #331a1a; border-radius: 4px;';
+                document.getElementById('upload-zone').parentNode.appendChild(errorEl);
+            }
+            errorEl.textContent = '⚠️ ' + message;
+            errorEl.style.display = 'block';
+            
+            // Clear preview if shown
+            document.getElementById('preview-img').style.display = 'none';
+            document.getElementById('upload-seed-btn').style.display = 'none';
+            pendingImage = null;
+        }
+        
+        function clearUploadError() {
+            const errorEl = document.getElementById('upload-error');
+            if (errorEl) {
+                errorEl.style.display = 'none';
+            }
+        }
+        
+        function uploadSeed() {
+            if (!ws || ws.readyState !== WebSocket.OPEN || !pendingImage) return;
+            
+            ws.send(JSON.stringify({
+                type: 'seed_image',
+                data: pendingImage,
+            }));
+            
+            // Also send reset command
+            ws.send(JSON.stringify({
+                type: 'reset',
+            }));
+            
+            // Clear preview and errors
+            document.getElementById('preview-img').style.display = 'none';
+            document.getElementById('upload-seed-btn').style.display = 'none';
+            pendingImage = null;
+            clearUploadError();
+            
+            updateActivity();
+        }
+        
+        // =============================================================================
+        // TIMERS & ACTIVITY
+        // =============================================================================
+        
+        let timerInterval = null;
+        
+        function startTimers() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                updateTimerDisplays();
+                sendHeartbeat();
+            }, 1000);
+        }
+        
+        function updateTimerDisplays() {
+            // Session time remaining
+            const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+            const sessionRemaining = Math.max(0, sessionDuration - elapsed);
+            document.getElementById('session-time').textContent = formatTime(sessionRemaining);
+            
+            // Color code session time
+            const sessionEl = document.getElementById('session-time');
+            if (sessionRemaining < 60) {
+                sessionEl.className = 'metric-value danger';
+            } else if (sessionRemaining < 180) {
+                sessionEl.className = 'metric-value warning';
+            } else {
+                sessionEl.className = 'metric-value';
+            }
+            
+            // Idle time remaining
+            const idleElapsed = Math.floor((Date.now() - lastActivityTime) / 1000);
+            const idleRemaining = Math.max(0, idleTimeout - idleElapsed);
+            document.getElementById('idle-time').textContent = formatTime(idleRemaining);
+
+            // Client-side idle kick: when timer hits 0, disconnect exactly like the button
+            // (server-side idle handling can be unreliable depending on router/session behavior)
+            if (idleRemaining <= 0 && ws && ws.readyState === WebSocket.OPEN) {
+                disconnect();
+                return;
+            }
+            
+            // Color code idle time
+            const idleEl = document.getElementById('idle-time');
+            if (idleRemaining < 30) {
+                idleEl.className = 'metric-value danger';
+            } else if (idleRemaining < 60) {
+                idleEl.className = 'metric-value warning';
+            } else {
+                idleEl.className = 'metric-value';
+            }
+            
+            // Update GPU ID
+            document.getElementById('gpu-id').textContent = currentPort ? (currentPort - 8080) : '-';
+        }
+        
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+        
+        function updateActivity() {
+            lastActivityTime = Date.now();
+        }
+        
+        async function sendHeartbeat() {
+            if (!sessionId || !currentMachine) return;
+            
+            try {
+                const response = await fetch(
+                    `http://${currentMachine.ip}:${ROUTER_PORT}/heartbeat?session_id=${sessionId}`
+                );
+                const data = await response.json();
+                
+                if (!data.success) {
+                    console.error('Heartbeat failed:', data.error);
+                    if (data.error === 'session_not_found') {
+                        alert('Session expired. Please reconnect.');
+                        showLoginPanel();
+                    }
+                }
+            } catch (e) {
+                console.error('Heartbeat error:', e);
+            }
+        }
+        
+        // =============================================================================
+        // UI HELPERS
+        // =============================================================================
+        
+        function setLoginStatus(message, type) {
+            const el = document.getElementById('login-status');
+            el.textContent = message;
+            el.className = type;
+        }
+        
+        function setConnectionStatus(connected) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('connection-text');
+            
+            if (connected) {
+                dot.classList.add('connected');
+                text.textContent = 'Connected';
+            } else {
+                dot.classList.remove('connected');
+                text.textContent = 'Disconnected';
+            }
+        }
+        
+        function showLoginPanel() {
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('game-panel').style.display = 'none';
+            document.getElementById('slots-full-message').style.display = 'none';
+            document.getElementById('connect-btn').disabled = false;
+
+            // Require passphrase re-entry after disconnect
+            passphrase = '';
+            const passEl = document.getElementById('passphrase-input');
+            passEl.value = '';
+            setLoginStatus('', '');
+            passEl.focus();
+
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            sessionId = null;
+            currentMachine = null;
+            currentPort = null;
+            activeKeys.clear();
+            isPaused = false;
+            document.getElementById('pause-indicator').style.display = 'none';
+        }
+        
+        function showGamePanel() {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('game-panel').style.display = 'block';
+            setConnectionStatus(true);
+        }
+        
+        function showSlotsFull() {
+            document.getElementById('slots-full-message').style.display = 'block';
+            document.getElementById('connect-btn').disabled = false;
+        }
+        
+        function manualRetry() {
+            document.getElementById('slots-full-message').style.display = 'none';
+            attemptConnect();
+        }
+        
+        // =============================================================================
+        // CLEANUP ON PAGE CLOSE/REFRESH
+        // =============================================================================
+        
+        // Release GPU when page is closed or refreshed
+        window.addEventListener('beforeunload', (e) => {
+            if (sessionId && currentMachine) {
+                // Use sendBeacon for reliable delivery during page unload
+                const data = JSON.stringify({ session_id: sessionId });
+                navigator.sendBeacon(
+                    `http://${currentMachine.ip}:${ROUTER_PORT}/release`,
+                    new Blob([data], { type: 'application/json' })
+                );
+            }
+            if (ws) {
+                ws.close();
+            }
+        });
+        
+        // Also handle visibility change (tab hidden for extended period)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && ws && ws.readyState === WebSocket.OPEN) {
+                // Tab is hidden, connection still open - that's fine
+                // The idle timeout on server will handle AFK users
+            }
+        });
+        
+        // =============================================================================
+        // INIT
+        // =============================================================================
+        
+        // Enter key to connect
+        document.getElementById('passphrase-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                attemptConnect();
+            }
+        });
+        
+        // Focus passphrase input on load
+        document.getElementById('passphrase-input').focus();
+    </script>
+</body>
+</html>
