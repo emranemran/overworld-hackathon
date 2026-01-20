@@ -300,7 +300,250 @@
             font-weight: bold;
             display: none;
         }
-        
+
+        /* Media Type Toggle */
+        .media-toggle {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .media-toggle-btn {
+            flex: 1;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #888;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .media-toggle-btn:hover {
+            border-color: #00ff88;
+        }
+
+        .media-toggle-btn.active {
+            background: #00ff88;
+            color: #000;
+            border-color: #00ff88;
+            font-weight: bold;
+        }
+
+        /* Video Controls */
+        .video-controls {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .video-controls.visible {
+            display: block;
+        }
+
+        .interval-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .interval-label {
+            font-size: 12px;
+            color: #888;
+            flex-shrink: 0;
+        }
+
+        .interval-input {
+            width: 60px;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .interval-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .interval-unit {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Frame Preview */
+        .frame-preview {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .frame-preview.visible {
+            display: block;
+        }
+
+        .frame-count {
+            font-size: 12px;
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .frame-filmstrip {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            padding: 5px 0;
+            max-height: 80px;
+        }
+
+        .frame-filmstrip::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .frame-filmstrip::-webkit-scrollbar-track {
+            background: #0a0a0a;
+            border-radius: 3px;
+        }
+
+        .frame-filmstrip::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 3px;
+        }
+
+        .frame-thumbnail-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .frame-thumbnail {
+            width: 60px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 2px;
+            border: 1px solid #333;
+            display: block;
+        }
+
+        .frame-remove-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 16px;
+            height: 16px;
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 10px;
+            line-height: 14px;
+            text-align: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .frame-thumbnail-wrapper:hover .frame-remove-btn {
+            opacity: 1;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .progress-container.visible {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #0a0a0a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00ff88;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .progress-text {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        #extract-frames-btn {
+            width: 100%;
+            background: #ff8800;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+
+        #extract-frames-btn:disabled {
+            background: #444;
+            cursor: not-allowed;
+        }
+
+        #stream-frames-btn {
+            width: 100%;
+            background: #aa44ff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+
+        #stop-stream-btn {
+            width: 100%;
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .stream-progress {
+            display: none;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aa44ff;
+            text-align: center;
+        }
+
+        .stream-progress.visible {
+            display: block;
+        }
+
+        #video-preview {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
         /* Controls Panel */
         .controls-info {
             font-size: 12px;
@@ -447,16 +690,79 @@
                         <button id="apply-prompt-btn" onclick="applyPrompt()">APPLY PROMPT</button>
                     </div>
                     
-                    <!-- Image Upload Panel -->
+                    <!-- Media Upload Panel -->
                     <div class="panel">
-                        <h3>Upload Seed Image</h3>
-                        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
-                            <p>📁 Click or drag image here</p>
-                            <p style="font-size: 11px; color: #666; margin-top: 5px;">Supported: PNG, JPG</p>
+                        <h3>Upload Seed Media</h3>
+
+                        <!-- Media Type Toggle -->
+                        <div class="media-toggle">
+                            <button class="media-toggle-btn active" id="image-mode-btn" onclick="toggleMediaMode('image')">Image</button>
+                            <button class="media-toggle-btn" id="video-mode-btn" onclick="toggleMediaMode('video')">Video</button>
                         </div>
+
+                        <!-- Video Controls (hidden by default) -->
+                        <div class="video-controls" id="video-controls">
+                            <div class="interval-group">
+                                <span class="interval-label">Extract every</span>
+                                <input type="number" class="interval-input" id="extraction-interval" value="1" min="0.1" max="10" step="0.1" />
+                                <span class="interval-unit">seconds</span>
+                            </div>
+                        </div>
+
+                        <!-- Upload Zone -->
+                        <div class="upload-zone" id="upload-zone" onclick="triggerFileInput()">
+                            <p id="upload-zone-text">📁 Click or drag image here</p>
+                            <p id="upload-zone-hint" style="font-size: 11px; color: #666; margin-top: 5px;">Supported: PNG, JPG</p>
+                        </div>
+
+                        <!-- File Inputs -->
                         <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg" onchange="handleFileSelect(event)" />
+                        <input type="file" id="video-input" accept="video/mp4,video/webm" onchange="handleVideoSelect(event)" style="display: none;" />
+
+                        <!-- Image Preview -->
                         <img id="preview-img" />
-                        <button id="upload-seed-btn" onclick="uploadSeed()">UPLOAD & RESET</button>
+
+                        <!-- Video Preview -->
+                        <video id="video-preview" muted></video>
+
+                        <!-- Extraction Progress -->
+                        <div class="progress-container" id="extraction-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="extraction-progress-fill"></div>
+                            </div>
+                            <div class="progress-text" id="extraction-progress-text">Extracting frames...</div>
+                        </div>
+
+                        <!-- Frame Preview -->
+                        <div class="frame-preview" id="frame-preview">
+                            <div class="frame-count" id="frame-count">0 frames extracted</div>
+                            <div class="frame-filmstrip" id="frame-filmstrip"></div>
+                        </div>
+
+                        <!-- Stream Interval Control -->
+                        <div class="video-controls" id="stream-interval-controls">
+                            <div class="interval-group">
+                                <span class="interval-label">Stream every</span>
+                                <input type="number" class="interval-input" id="stream-interval" value="2" min="0.5" max="60" step="0.5" />
+                                <span class="interval-unit">seconds</span>
+                            </div>
+                            <div class="interval-group">
+                                <span class="interval-label">Context frames</span>
+                                <input type="number" class="interval-input" id="context-frames" value="1" min="1" max="10" step="1" />
+                                <span class="interval-unit">(sliding window)</span>
+                            </div>
+                        </div>
+
+                        <!-- Stream Progress -->
+                        <div class="stream-progress" id="stream-progress">
+                            Streaming frame <span id="stream-current">0</span> of <span id="stream-total">0</span>...
+                        </div>
+
+                        <!-- Buttons -->
+                        <button id="extract-frames-btn" onclick="extractFramesFromVideo()">EXTRACT FRAMES</button>
+                        <button id="upload-seed-btn" onclick="uploadSeed()">UPLOAD ALL</button>
+                        <button id="stream-frames-btn" onclick="startFrameStream()">STREAM FRAMES</button>
+                        <button id="stop-stream-btn" onclick="stopFrameStream()">STOP STREAMING</button>
                     </div>
                     
                     <!-- Controls Info -->
@@ -513,7 +819,17 @@
         
         let activeKeys = new Set();
         let pendingImage = null;
-        
+
+        // Video upload state
+        let mediaMode = 'image'; // 'image' or 'video'
+        let pendingVideo = null; // File object
+        let pendingVideoUrl = null; // Object URL for preview
+        let extractedFrames = []; // Array of base64 strings
+        let isExtractingFrames = false;
+        let isStreamingFrames = false;
+        let streamIntervalId = null;
+        let currentStreamIndex = 0;
+
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         
@@ -880,10 +1196,14 @@
         uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadZone.classList.remove('dragover');
-            
+
             const file = e.dataTransfer.files[0];
             if (file) {
-                processImageFile(file);
+                if (mediaMode === 'video') {
+                    processVideoFile(file);
+                } else {
+                    processImageFile(file);
+                }
             }
         });
         
@@ -949,25 +1269,380 @@
         }
         
         function uploadSeed() {
-            if (!ws || ws.readyState !== WebSocket.OPEN || !pendingImage) return;
-            
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+            if (mediaMode === 'video' && extractedFrames.length > 0) {
+                // Video mode: send all extracted frames
+                uploadVideoFrames();
+            } else if (mediaMode === 'image' && pendingImage) {
+                // Image mode: send single image
+                ws.send(JSON.stringify({
+                    type: 'seed_image',
+                    data: pendingImage,
+                }));
+
+                // Also send reset command
+                ws.send(JSON.stringify({
+                    type: 'reset',
+                }));
+
+                // Clear preview and errors
+                document.getElementById('preview-img').style.display = 'none';
+                document.getElementById('upload-seed-btn').style.display = 'none';
+                pendingImage = null;
+                clearUploadError();
+
+                updateActivity();
+            }
+        }
+
+        // =============================================================================
+        // VIDEO UPLOAD FUNCTIONS
+        // =============================================================================
+
+        function toggleMediaMode(mode) {
+            mediaMode = mode;
+
+            // Update toggle buttons
+            document.getElementById('image-mode-btn').classList.toggle('active', mode === 'image');
+            document.getElementById('video-mode-btn').classList.toggle('active', mode === 'video');
+
+            // Update video controls visibility
+            document.getElementById('video-controls').classList.toggle('visible', mode === 'video');
+
+            // Update upload zone text
+            const uploadZoneText = document.getElementById('upload-zone-text');
+            const uploadZoneHint = document.getElementById('upload-zone-hint');
+            if (mode === 'video') {
+                uploadZoneText.textContent = '📁 Click or drag video here';
+                uploadZoneHint.textContent = 'Supported: MP4, WebM';
+            } else {
+                uploadZoneText.textContent = '📁 Click or drag image here';
+                uploadZoneHint.textContent = 'Supported: PNG, JPG';
+            }
+
+            // Clear all previews and state when switching modes
+            clearVideoState();
+            clearImageState();
+        }
+
+        function triggerFileInput() {
+            if (mediaMode === 'video') {
+                document.getElementById('video-input').click();
+            } else {
+                document.getElementById('file-input').click();
+            }
+        }
+
+        function handleVideoSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            processVideoFile(file);
+        }
+
+        const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm'];
+
+        function processVideoFile(file) {
+            // Validate file type
+            if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+                showUploadError('Supported video types: MP4, WebM.');
+                return;
+            }
+
+            clearUploadError();
+            clearVideoState();
+
+            // Create object URL for preview
+            pendingVideo = file;
+            pendingVideoUrl = URL.createObjectURL(file);
+
+            // Show video preview
+            const videoPreview = document.getElementById('video-preview');
+            videoPreview.src = pendingVideoUrl;
+            videoPreview.style.display = 'block';
+
+            // Wait for metadata then show extract button
+            videoPreview.onloadedmetadata = () => {
+                document.getElementById('extract-frames-btn').style.display = 'block';
+            };
+        }
+
+        async function extractFramesFromVideo() {
+            if (!pendingVideo || isExtractingFrames) return;
+
+            isExtractingFrames = true;
+            extractedFrames = [];
+
+            const extractBtn = document.getElementById('extract-frames-btn');
+            extractBtn.disabled = true;
+            extractBtn.textContent = 'EXTRACTING...';
+
+            // Show progress
+            const progressContainer = document.getElementById('extraction-progress');
+            const progressFill = document.getElementById('extraction-progress-fill');
+            const progressText = document.getElementById('extraction-progress-text');
+            progressContainer.classList.add('visible');
+
+            // Create video element for extraction
+            const video = document.createElement('video');
+            video.muted = true;
+            video.src = pendingVideoUrl;
+
+            try {
+                // Wait for video to be ready
+                await new Promise((resolve, reject) => {
+                    video.onloadedmetadata = resolve;
+                    video.onerror = () => reject(new Error('Failed to load video'));
+                });
+
+                const duration = video.duration;
+                const interval = parseFloat(document.getElementById('extraction-interval').value) || 1;
+                const frameCount = Math.min(Math.floor(duration / interval) + 1, 100); // Max 100 frames
+
+                // Create canvas for frame extraction
+                const extractCanvas = document.createElement('canvas');
+                extractCanvas.width = 640;
+                extractCanvas.height = 360;
+                const extractCtx = extractCanvas.getContext('2d');
+
+                for (let i = 0; i < frameCount; i++) {
+                    const timestamp = i * interval;
+                    if (timestamp > duration) break;
+
+                    // Seek to timestamp
+                    video.currentTime = timestamp;
+                    await new Promise((resolve) => {
+                        video.onseeked = resolve;
+                    });
+
+                    // Draw frame to canvas
+                    extractCtx.drawImage(video, 0, 0, extractCanvas.width, extractCanvas.height);
+
+                    // Convert to base64
+                    const base64 = extractCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+                    extractedFrames.push(base64);
+
+                    // Update progress
+                    const progress = ((i + 1) / frameCount) * 100;
+                    progressFill.style.width = progress + '%';
+                    progressText.textContent = `Extracting frame ${i + 1} of ${frameCount}...`;
+                }
+
+                // Show frame preview
+                showExtractedFramesPreview();
+
+                // Show upload button
+                document.getElementById('upload-seed-btn').style.display = 'block';
+
+            } catch (error) {
+                console.error('Frame extraction error:', error);
+                showUploadError('Failed to extract frames from video.');
+            } finally {
+                isExtractingFrames = false;
+                extractBtn.disabled = false;
+                extractBtn.textContent = 'EXTRACT FRAMES';
+                progressContainer.classList.remove('visible');
+            }
+        }
+
+        function showExtractedFramesPreview() {
+            const framePreview = document.getElementById('frame-preview');
+            const frameCountEl = document.getElementById('frame-count');
+            const filmstrip = document.getElementById('frame-filmstrip');
+
+            frameCountEl.textContent = `${extractedFrames.length} frames (hover to remove)`;
+            filmstrip.innerHTML = '';
+
+            // Show all frames with remove buttons
+            for (let i = 0; i < extractedFrames.length; i++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'frame-thumbnail-wrapper';
+
+                const img = document.createElement('img');
+                img.className = 'frame-thumbnail';
+                img.src = 'data:image/jpeg;base64,' + extractedFrames[i];
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'frame-remove-btn';
+                removeBtn.textContent = '×';
+                removeBtn.onclick = () => removeFrame(i);
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                filmstrip.appendChild(wrapper);
+            }
+
+            framePreview.classList.add('visible');
+
+            // Show/hide buttons based on frame count
+            if (extractedFrames.length === 0) {
+                document.getElementById('upload-seed-btn').style.display = 'none';
+                document.getElementById('stream-frames-btn').style.display = 'none';
+                document.getElementById('stream-interval-controls').classList.remove('visible');
+            } else {
+                document.getElementById('stream-frames-btn').style.display = 'block';
+                document.getElementById('stream-interval-controls').classList.add('visible');
+            }
+        }
+
+        function removeFrame(index) {
+            extractedFrames.splice(index, 1);
+            showExtractedFramesPreview();
+        }
+
+        function startFrameStream() {
+            if (!ws || ws.readyState !== WebSocket.OPEN || extractedFrames.length === 0 || isStreamingFrames) return;
+
+            isStreamingFrames = true;
+            currentStreamIndex = 0;
+
+            // Get interval from input
+            const intervalSeconds = parseFloat(document.getElementById('stream-interval').value) || 2;
+            const intervalMs = intervalSeconds * 1000;
+
+            // Update UI
+            document.getElementById('stream-frames-btn').style.display = 'none';
+            document.getElementById('upload-seed-btn').style.display = 'none';
+            document.getElementById('stop-stream-btn').style.display = 'block';
+            document.getElementById('stream-progress').classList.add('visible');
+            document.getElementById('stream-total').textContent = extractedFrames.length;
+
+            // Send first frame immediately (each frame sends seed_image + reset)
+            sendNextStreamFrame();
+
+            // Then send remaining frames at interval
+            if (extractedFrames.length > 1) {
+                streamIntervalId = setInterval(() => {
+                    sendNextStreamFrame();
+                }, intervalMs);
+            }
+        }
+
+        function sendNextStreamFrame() {
+            if (!isStreamingFrames || currentStreamIndex >= extractedFrames.length) {
+                stopFrameStream();
+                return;
+            }
+
+            // Get context window size
+            const contextSize = parseInt(document.getElementById('context-frames').value) || 1;
+
+            // Calculate context window: last N frames before current
+            const contextStart = Math.max(0, currentStreamIndex - contextSize);
+            const contextEnd = currentStreamIndex - 1;
+
+            // Update progress
+            document.getElementById('stream-current').textContent = currentStreamIndex + 1;
+
+            // Send context frames (last N frames)
+            for (let i = contextStart; i <= contextEnd && i >= 0; i++) {
+                ws.send(JSON.stringify({
+                    type: 'seed_image',
+                    data: extractedFrames[i],
+                }));
+            }
+
+            // Send the next frame in sequence (current frame)
             ws.send(JSON.stringify({
                 type: 'seed_image',
-                data: pendingImage,
+                data: extractedFrames[currentStreamIndex],
             }));
-            
-            // Also send reset command
+
+            // Send reset after context + next frame
             ws.send(JSON.stringify({
                 type: 'reset',
             }));
-            
-            // Clear preview and errors
-            document.getElementById('preview-img').style.display = 'none';
-            document.getElementById('upload-seed-btn').style.display = 'none';
-            pendingImage = null;
-            clearUploadError();
-            
+
             updateActivity();
+            currentStreamIndex++;
+
+            // Check if done
+            if (currentStreamIndex >= extractedFrames.length) {
+                stopFrameStream();
+            }
+        }
+
+        function stopFrameStream() {
+            if (streamIntervalId) {
+                clearInterval(streamIntervalId);
+                streamIntervalId = null;
+            }
+
+            isStreamingFrames = false;
+            currentStreamIndex = 0;
+
+            // Update UI
+            document.getElementById('stop-stream-btn').style.display = 'none';
+            document.getElementById('stream-progress').classList.remove('visible');
+
+            // Show buttons again if frames still exist
+            if (extractedFrames.length > 0) {
+                document.getElementById('stream-frames-btn').style.display = 'block';
+                document.getElementById('upload-seed-btn').style.display = 'block';
+            }
+        }
+
+        function uploadVideoFrames() {
+            if (!ws || ws.readyState !== WebSocket.OPEN || extractedFrames.length === 0) return;
+
+            // Send reset command first
+            ws.send(JSON.stringify({
+                type: 'reset',
+            }));
+
+            // Send all frames in rapid succession
+            for (const frameData of extractedFrames) {
+                ws.send(JSON.stringify({
+                    type: 'seed_image',
+                    data: frameData,
+                }));
+            }
+
+            // Clear state
+            clearVideoState();
+            updateActivity();
+        }
+
+        function clearVideoState() {
+            // Stop any active streaming
+            stopFrameStream();
+
+            if (pendingVideoUrl) {
+                URL.revokeObjectURL(pendingVideoUrl);
+            }
+            pendingVideo = null;
+            pendingVideoUrl = null;
+            extractedFrames = [];
+            isExtractingFrames = false;
+
+            document.getElementById('video-preview').style.display = 'none';
+            document.getElementById('video-preview').src = '';
+            document.getElementById('extract-frames-btn').style.display = 'none';
+            document.getElementById('frame-preview').classList.remove('visible');
+            document.getElementById('frame-filmstrip').innerHTML = '';
+            document.getElementById('extraction-progress').classList.remove('visible');
+            document.getElementById('stream-interval-controls').classList.remove('visible');
+            document.getElementById('stream-frames-btn').style.display = 'none';
+            document.getElementById('stop-stream-btn').style.display = 'none';
+            document.getElementById('stream-progress').classList.remove('visible');
+
+            if (mediaMode === 'video') {
+                document.getElementById('upload-seed-btn').style.display = 'none';
+            }
+
+            // Reset file input
+            document.getElementById('video-input').value = '';
+        }
+
+        function clearImageState() {
+            pendingImage = null;
+            document.getElementById('preview-img').style.display = 'none';
+            document.getElementById('preview-img').src = '';
+            if (mediaMode === 'image') {
+                document.getElementById('upload-seed-btn').style.display = 'none';
+            }
+            document.getElementById('file-input').value = '';
+            clearUploadError();
         }
         
         // =============================================================================
