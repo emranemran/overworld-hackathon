@@ -1481,6 +1481,7 @@
                 document.getElementById('stream-interval-controls').classList.remove('visible');
             } else {
                 document.getElementById('stream-frames-btn').style.display = 'block';
+                document.getElementById('upload-seed-btn').style.display = 'block';
                 document.getElementById('stream-interval-controls').classList.add('visible');
             }
         }
@@ -1585,18 +1586,18 @@
         function uploadVideoFrames() {
             if (!ws || ws.readyState !== WebSocket.OPEN || extractedFrames.length === 0) return;
 
-            // Send reset command first
-            ws.send(JSON.stringify({
-                type: 'reset',
-            }));
-
-            // Send all frames in rapid succession
+            // Send all frames first
             for (const frameData of extractedFrames) {
                 ws.send(JSON.stringify({
                     type: 'seed_image',
                     data: frameData,
                 }));
             }
+
+            // Send reset command after frames are sent
+            ws.send(JSON.stringify({
+                type: 'reset',
+            }));
 
             // Clear state
             clearVideoState();
